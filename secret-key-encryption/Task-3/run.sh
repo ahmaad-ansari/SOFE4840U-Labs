@@ -4,8 +4,8 @@
 flip_single_bit() {
     hex_string=$1
     bit_position=$2
-    flipped_hex=$(printf "%02x" $((0x$hex_string ^ (1 << (7 - $bit_position)))))
-    printf "%02x" $flipped_hex
+    flipped_hex=$(echo $hex_string | awk -v pos=$bit_position '{printf("%02x", ("0x" $1) ^ (1 << pos))}')
+    echo $flipped_hex
 }
 
 # AES-128-ECB
