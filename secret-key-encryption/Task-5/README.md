@@ -6,7 +6,7 @@
 
 1. **Compile the Code:**
    - Before compiling, ensure you have OpenSSL installed.
-   - Update the Makefile with the correct paths to OpenSSL include and library directories (if necessary).
+   - Update the Makefile with the correct paths to OpenSSL including library directories (if necessary).
    - Compile the code using the provided Makefile:
      ```bash
      make
@@ -37,5 +37,3 @@
 
 - **Customization:**
   - You can modify the code to adapt it for different encryption algorithms or key lengths if needed.
-
-**Note:** This task requires you to write your own program using OpenSSL's crypto library, and credit will not be given for using openssl commands directly.
