@@ -24,27 +24,17 @@ For AES-256-CBC:
 dd if=pic.bmp of=aes_256_cbc_encrypted.bmp bs=54 count=1 conv=notrunc
 ```
 
-### Observation and Explanation:
+### Observation:
 
 1. **AES-256-ECB:**
-   - **Command:**
-     ```bash
-     openssl enc -aes-256-ecb -e -in pic.bmp -out aes_256_ecb_encrypted.bmp -K 001122334455
-     ```
-   - **Observation:**
-     - ECB mode doesn't use an initialization vector (IV).
-     - Each block is encrypted independently.
-     - Replacing the header allows the file to be opened as a BMP file, but patterns in the original picture might still be recognizable.
+   - ECB mode doesn't use an initialization vector (IV).
+   - Each block is encrypted independently.
+   - Replacing the header allows the file to be opened as a BMP file, but patterns in the original picture might still be recognizable.
 
 2. **AES-256-CBC:**
-   - **Command:**
-     ```bash
-     openssl enc -aes-256-cbc -e -in pic.bmp -out aes_256_cbc_encrypted.bmp -K 001122334455 -iv 001002003004005
-     ```
-   - **Observation:**
-     - CBC mode uses an IV and involves chaining blocks.
-     - The header replacement makes the encrypted file appear as a valid BMP file.
-     - The chaining effect in CBC provides better security against pattern recognition compared to ECB.
+   - CBC mode uses an IV and involves chaining blocks.
+   - The header replacement makes the encrypted file appear as a valid BMP file.
+   - The chaining effect in CBC provides better security against pattern recognition compared to ECB.
 
 ## Note:
 - Adjust file paths and names according to your actual setup.
