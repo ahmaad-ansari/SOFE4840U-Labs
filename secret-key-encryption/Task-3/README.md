@@ -16,6 +16,58 @@
    openssl enc -aes-128-cbc -d -in corrupted_aes128cbc.txt -out decrypted_corrupted_aes128cbc.txt -K 001122334455 -iv 001002003004005
    ```
 
+### AES-128-ECB:
+#### Encrypting:
+```bash
+openssl enc -aes-128-ecb -e -in plaintext.txt -out encrypted_aes128ecb.txt -K 001122334455
+```
+#### Corrupting a Single Bit:
+- Use a hex editor to change a single bit in the `encrypted_aes128ecb.txt` file.
+
+#### Decrypting Corrupted File:
+```bash
+openssl enc -aes-128-ecb -d -in corrupted_aes128ecb.txt -out decrypted_corrupted_aes128ecb.txt -K 001122334455
+```
+
+### AES-128-CBC:
+#### Encrypting:
+```bash
+openssl enc -aes-128-cbc -e -in plaintext.txt -out encrypted_aes128cbc.txt -K 001122334455 -iv 001002003004005
+```
+#### Corrupting a Single Bit:
+- Use a hex editor to change a single bit in the `encrypted_aes128cbc.txt` file.
+
+#### Decrypting Corrupted File:
+```bash
+openssl enc -aes-128-cbc -d -in corrupted_aes128cbc.txt -out decrypted_corrupted_aes128cbc.txt -K 001122334455 -iv 001002003004005
+```
+
+### AES-128-CFB:
+#### Encrypting:
+```bash
+openssl enc -aes-128-cfb -e -in plaintext.txt -out encrypted_aes128cfb.txt -K 001122334455 -iv 001002003004005
+```
+#### Corrupting a Single Bit:
+- Use a hex editor to change a single bit in the `encrypted_aes128cfb.txt` file.
+
+#### Decrypting Corrupted File:
+```bash
+openssl enc -aes-128-cfb -d -in corrupted_aes128cfb.txt -out decrypted_corrupted_aes128cfb.txt -K 001122334455 -iv 001002003004005
+```
+
+### AES-128-OFB:
+#### Encrypting:
+```bash
+openssl enc -aes-128-ofb -e -in plaintext.txt -out encrypted_aes128ofb.txt -K 001122334455 -iv 001002003004005
+```
+#### Corrupting a Single Bit:
+- Use a hex editor to change a single bit in the `encrypted_aes128ofb.txt` file.
+
+#### Decrypting Corrupted File:
+```bash
+openssl enc -aes-128-ofb -d -in corrupted_aes128ofb.txt -out decrypted_corrupted_aes128ofb.txt -K 001122334455 -iv 001002003004005
+```
+
 ## Answers to Questions:
 
 (1) **How much information can you recover by decrypting the corrupted file, if the encryption mode is ECB, CBC, CFB, or OFB, respectively?**
@@ -40,6 +92,8 @@
 - **OFB:** Limited impact, as corruption is confined to the current block.
 
 ## Note:
-- Adjust file paths and names according to your actual setup.
-- The hex editor tool allows you to manipulate individual bits or bytes in the file.
-- Observations might vary based on the specific bit or byte corrupted.
+- Replace `plaintext.txt` with the actual path to your text file.
+- Adjust the output file names accordingly.
+- Use a hex editor to manipulate a single bit as instructed in Task 3.
+- The initialization vector (`-iv`) is used for CBC, CFB, and OFB modes. Make sure to adjust it if needed.
+- These commands assume the use of AES-128. If you need a different key size, you can adjust the command accordingly (e.g., `aes-256-ecb` for AES-256).
