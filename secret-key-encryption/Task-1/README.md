@@ -41,7 +41,6 @@ openssl enc -des-ede3-cfb1 -e -in plaintext.txt -out ciphertext_desede3cfb1.txt 
   - Cipher: Triple DES (3DES) in CFB mode with a feedback size of 1 bit.
   - 3DES applies the DES cipher algorithm three times to each data block.
 
-### Note:
+## Note:
 - Replace `plaintext.txt` with the actual path to your text file.
 - Adjust the output file names accordingly.
-- If you face any issues or have further questions, feel free to ask.
