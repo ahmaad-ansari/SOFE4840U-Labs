@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Function to flip a single bit in a hex string
+# Function to flip the least significant bit in each byte of a hex string
 flip_single_bit() {
     hex_string=$1
-    bit_position=$2
-    flipped_hex=$(echo $hex_string | awk -v pos=$bit_position '{printf("%02x", ("0x" $1) ^ (1 << pos))}')
+    flipped_hex=$(echo $hex_string | sed 's/\(..\)/\1 /g' | awk '{printf("%02x ", ("0x" $1) ^ 1)}' | sed 's/ //g')
     echo $flipped_hex
 }
 
@@ -14,7 +13,7 @@ openssl enc -aes-128-ecb -e -in plaintext.txt -out encrypted_aes128ecb.txt -K 00
 
 # Corrupting a Single Bit
 hex_string=$(xxd -p -l 16 encrypted_aes128ecb.txt)
-flipped_hex=$(flip_single_bit $hex_string 0)
+flipped_hex=$(flip_single_bit $hex_string)
 echo $flipped_hex | xxd -r -p > corrupted_aes128ecb.txt
 
 # Decrypting Corrupted File
@@ -26,7 +25,7 @@ openssl enc -aes-128-cbc -e -in plaintext.txt -out encrypted_aes128cbc.txt -K 00
 
 # Corrupting a Single Bit
 hex_string=$(xxd -p -l 16 encrypted_aes128cbc.txt)
-flipped_hex=$(flip_single_bit $hex_string 0)
+flipped_hex=$(flip_single_bit $hex_string)
 echo $flipped_hex | xxd -r -p > corrupted_aes128cbc.txt
 
 # Decrypting Corrupted File
@@ -38,7 +37,7 @@ openssl enc -aes-128-cfb -e -in plaintext.txt -out encrypted_aes128cfb.txt -K 00
 
 # Corrupting a Single Bit
 hex_string=$(xxd -p -l 16 encrypted_aes128cfb.txt)
-flipped_hex=$(flip_single_bit $hex_string 0)
+flipped_hex=$(flip_single_bit $hex_string)
 echo $flipped_hex | xxd -r -p > corrupted_aes128cfb.txt
 
 # Decrypting Corrupted File
@@ -50,7 +49,7 @@ openssl enc -aes-128-ofb -e -in plaintext.txt -out encrypted_aes128ofb.txt -K 00
 
 # Corrupting a Single Bit
 hex_string=$(xxd -p -l 16 encrypted_aes128ofb.txt)
-flipped_hex=$(flip_single_bit $hex_string 0)
+flipped_hex=$(flip_single_bit $hex_string)
 echo $flipped_hex | xxd -r -p > corrupted_aes128ofb.txt
 
 # Decrypting Corrupted File
