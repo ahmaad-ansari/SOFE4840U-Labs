@@ -3,19 +3,6 @@
 
 ## Task 3: Encryption Mode – Corrupted Cipher Text
 
-1. **Encrypting using AES-128-CBC:**
-   ```bash
-   openssl enc -aes-128-cbc -e -in plaintext.txt -out encrypted_aes128cbc.txt -K 001122334455 -iv 001002003004005
-   ```
-
-2. **Corrupting a Single Bit:**
-   - Use a hex editor to change a single bit in the `encrypted_aes128cbc.txt` file.
-
-3. **Decrypting Corrupted File:**
-   ```bash
-   openssl enc -aes-128-cbc -d -in corrupted_aes128cbc.txt -out decrypted_corrupted_aes128cbc.txt -K 001122334455 -iv 001002003004005
-   ```
-
 ### AES-128-ECB:
 #### Encrypting:
 ```bash
