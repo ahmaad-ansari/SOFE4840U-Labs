@@ -1,57 +1,72 @@
+#include <openssl/evp.h>
+#include <openssl/err.h>
 #include <stdio.h>
 #include <string.h>
-#include <openssl/evp.h>
+#include <stdlib.h>
 
-#define MAX_KEY_LENGTH 16
-#define CIPHERTEXT_HEX "8d20e5056a8d24d0462ce74e4904clb5"
+#define KEY_LENGTH 16
+#define BLOCK_SIZE 16
 #define PLAINTEXT "This is a top secret."
+#define CIPHERTEXT "\x8d\x20\xe5\x05\x6a\x8d\x24\xd0\x46\x2c\xe7\x4e\x49\x04\xcl\xb5\x13\xe1\x0d\x1d\xf4\xa2\xef\x2a\xd4\x54\x0f\xae\x1c\xa0\xaa\xf9"
+
+void handleErrors(void) {
+    ERR_print_errors_fp(stderr);
+    abort();
+}
+
+int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
+            unsigned char *iv, unsigned char *ciphertext) {
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int ciphertext_len;
+
+    if (!(ctx = EVP_CIPHER_CTX_new()))
+        handleErrors();
+
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
+        handleErrors();
+
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+        handleErrors();
+    ciphertext_len = len;
+
+    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+        handleErrors();
+    ciphertext_len += len;
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    return ciphertext_len;
+}
 
 int main() {
-    EVP_CIPHER_CTX *ctx;
-    const unsigned char *ciphertext_hex = CIPHERTEXT_HEX;
-    const unsigned char *plaintext = PLAINTEXT;
-    unsigned char key[MAX_KEY_LENGTH];
-    unsigned char decrypted_text[1024];  // Assuming a maximum length for decrypted text
-
-    // Initialize OpenSSL library
-    OpenSSL_add_all_algorithms();
-    ERR_load_crypto_strings();
-
-    // Dictionary file containing English words, one word per line
-    FILE *wordlist = fopen("wordlist.txt", "r");
-    if (!wordlist) {
-        fprintf(stderr, "Error: Could not open wordlist.txt\n");
+    FILE *file = fopen("wordlist.txt", "r");
+    if (file == NULL) {
+        fprintf(stderr, "Cannot open wordlist.txt\n");
         return 1;
     }
 
-    // Create and initialize the cipher context
-    ctx = EVP_CIPHER_CTX_new();
+    char word[17];
+    unsigned char ciphertext[BLOCK_SIZE * 2];
+    unsigned char iv[KEY_LENGTH] = {0};
+    unsigned char key[KEY_LENGTH];
+    int ciphertext_len;
 
-    // Iterate through each word in the wordlist
-    while (fgets(key, MAX_KEY_LENGTH, wordlist) != NULL) {
-        // Remove newline character from the key
-        key[strcspn(key, "\n")] = 0;
+    while (fscanf(file, "%16s", word) != EOF) {
+        int len = strlen(word);
+        memcpy(key, word, len);
+        memset(key + len, 0x20, KEY_LENGTH - len);
 
-        // Append space characters to the key to form a 128-bit key
-        while (strlen(key) < 16) {
-            strcat(key, " ");
-        }
+        ciphertext_len = encrypt((unsigned char *)PLAINTEXT, strlen(PLAINTEXT), key, iv, ciphertext);
 
-        // Decrypt the ciphertext using the current key
-        EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, NULL);
-        EVP_DecryptUpdate(ctx, decrypted_text, NULL, ciphertext_hex, strlen((char *)ciphertext_hex));
-        EVP_DecryptFinal_ex(ctx, decrypted_text + strlen((char *)decrypted_text), NULL);
-
-        // Check if the decrypted text matches the plaintext
-        if (strcmp((char *)decrypted_text, plaintext) == 0) {
-            printf("Key found: %s\n", key);
-            break;
+        if (ciphertext_len == sizeof(CIPHERTEXT) - 1 && memcmp(ciphertext, CIPHERTEXT, ciphertext_len) == 0) {
+            printf("Key found: %s\n", word);
+            fclose(file);
+            return 0;
         }
     }
 
-    // Clean up
-    EVP_CIPHER_CTX_free(ctx);
-    fclose(wordlist);
-
+    printf("Key not found in the provided wordlist.\n");
+    fclose(file);
     return 0;
 }
