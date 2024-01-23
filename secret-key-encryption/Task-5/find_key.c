@@ -14,24 +14,28 @@ void handleErrors(void) {
     abort();
 }
 
-int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
-            unsigned char *iv, unsigned char *ciphertext) {
+int encrypt(const unsigned char *plaintext, int plaintext_len, const unsigned char *key,
+            const unsigned char *iv, unsigned char *ciphertext) {
     EVP_CIPHER_CTX *ctx;
     int len;
     int ciphertext_len;
 
-    if (!(ctx = EVP_CIPHER_CTX_new()))
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
         handleErrors();
+    }
 
-    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
+    if (!EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv)) {
         handleErrors();
+    }
 
-    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+    if (!EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len)) {
         handleErrors();
+    }
     ciphertext_len = len;
 
-    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+    if (!EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) {
         handleErrors();
+    }
     ciphertext_len += len;
 
     EVP_CIPHER_CTX_free(ctx);
@@ -41,14 +45,14 @@ int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
 
 int main() {
     FILE *file = fopen("wordlist.txt", "r");
-    if (file == NULL) {
+    if (!file) {
         fprintf(stderr, "Cannot open wordlist.txt\n");
         return 1;
     }
 
     char word[17];
     unsigned char ciphertext[BLOCK_SIZE * 2];
-    unsigned char iv[KEY_LENGTH] = {0};
+    const unsigned char iv[KEY_LENGTH] = {0};
     unsigned char key[KEY_LENGTH];
     int ciphertext_len;
 
@@ -57,7 +61,9 @@ int main() {
         memcpy(key, word, len);
         memset(key + len, 0x20, KEY_LENGTH - len);
 
-        ciphertext_len = encrypt((unsigned char *)PLAINTEXT, strlen(PLAINTEXT), key, iv, ciphertext);
+        printf("Trying key: %s\n", word);
+
+        ciphertext_len = encrypt((const unsigned char *)PLAINTEXT, strlen(PLAINTEXT), key, iv, ciphertext);
 
         if (ciphertext_len == sizeof(CIPHERTEXT) - 1 && memcmp(ciphertext, CIPHERTEXT, ciphertext_len) == 0) {
             printf("Key found: %s\n", word);
