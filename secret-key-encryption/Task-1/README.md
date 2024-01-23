@@ -24,20 +24,20 @@ openssl enc -des-ede3-cfb1 -e -in plaintext.txt -out ciphertext_desede3cfb1.txt 
 
 ## Observation:
 
-- **AES-128-CBC:**
+1. **AES-128-CBC:**
   - Cipher: AES with 128-bit key in CBC mode.
   - Commonly used for symmetric key encryption.
   - Requires an initialization vector (IV) for added security.
 
-- **AES-128-CFB:**
+2. **AES-128-CFB:**
   - Cipher: AES with 128-bit key in CFB mode.
   - Cipher Feedback (CFB) mode, which operates on units smaller than a block.
 
-- **AES-192-GCM:**
+3. **AES-192-GCM:**
   - Cipher: AES with 192-bit key in GCM mode.
   - GCM provides authenticated encryption and is an AEAD (Authenticated Encryption with Associated Data) mode.
 
-- **DES-EDE3-CFB1:**
+4. **DES-EDE3-CFB1:**
   - Cipher: Triple DES (3DES) in CFB mode with a feedback size of 1 bit.
   - 3DES applies the DES cipher algorithm three times to each data block.
 
